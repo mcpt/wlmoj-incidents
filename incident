@@ -1,5 +1,9 @@
 #!/bin/sh
 
+create() {
+  echo "Create an incident"
+}
+
 help() {
   echo "Usage:  incident [OPTIONS] [<COMMAND> [ARGUMENTS]]
 
@@ -30,3 +34,9 @@ while true; do
 done
 
 unset ARGS
+
+# Handle commands
+case $1 in
+  (create) create;;
+  (*) printf "Unknown command '%s'.\n\n" "$1"; usage; exit 1;;
+esac
