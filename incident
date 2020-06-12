@@ -1,3 +1,25 @@
 #!/bin/sh
 
-echo hello
+help() {
+  echo "Usage:  incident [OPTIONS] [<COMMAND> [ARGUMENTS]]"
+  echo "Run 'incident <COMMAND> -h|--help' for more information on a command."
+}
+
+usage() {
+  echo "Usage:  incident [OPTIONS] [<COMMAND> [ARGUMENTS]]"
+  echo "Run -h or --help for more info."
+}
+
+# Handle pre-command functions
+ARGS=$(getopt --quiet --options 'h' --longoptions 'help' -- "$@") || ( usage; exit )
+eval "set -- $ARGS"
+
+while true; do
+  case $1 in
+    (-h|--help) help; exit 1;;
+    (--) shift; break;;
+    (*) usage; exit 1;;
+  esac
+done
+
+unset ARGS
