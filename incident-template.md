@@ -1,10 +1,10 @@
-# Incident YYYY-MM-DDx
+# Incident YYYY-MM-DDx ![`status: TODO`](/status-badges/TODO.svg)
 
 ## Issue Summary
 TODO
 
 ## Timeline (Eastern Time)
-- YYYY-MM-DD HH:MM TODO
+- `YYYY-MM-DD HH:MM` TODO
 
 ## Root Cause
 TODO
