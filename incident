@@ -31,7 +31,7 @@ change_status() {
 
 Changes the status of a technical incident. Where <INCIDENT> is a valid incident and <NEW STATUS> is one of:
 
-$(ls status-badges | sed -e 's/\.svg//g' -e 's/^/  /')
+$(find status-badges/ -type f | sed -e 's/^.*\///g' -e 's/\.svg.*$//g' -e 's/^/  /')
 
 Options:
   -h, --help  Displays this help message and exits."; exit 1;;
@@ -134,7 +134,7 @@ Options:
 
   printf "Incident\tStatus\n"
   for incident in $(find "$INCIDENTS_PATH" -type f); do
-    printf "%s\t%s\n" "$(echo \"$incident\" | sed -e 's/.*\///g' -e 's/.md.*//g')" "$(head -n 1 "$incident" | sed -e 's/^.*status-badges\///g' -e 's/\.svg.*$//g')"
+    printf "%s\t%s\n" "$(echo "$incident" | sed -e 's/.*\///g' -e 's/.md.*//g')" "$(head -n 1 "$incident" | sed -e 's/^.*status-badges\///g' -e 's/\.svg.*$//g')"
   done
 }
 
