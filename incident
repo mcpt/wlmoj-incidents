@@ -107,8 +107,35 @@ Options:
 Commands:
   change-status  Change the status of an incident.
   create         Create a new incident.
+  list           List the incidents.
 
 Run 'incident <COMMAND> -h|--help' for more information on a command."
+}
+
+list() {
+  ARGS=$(getopt --name "$WHOAMI" --options 'h' --longoptions 'help' -- "$@")
+  [ "$?" -ne 0 ] && usage && exit
+  eval "set -- $ARGS"
+
+  while true; do
+    case $1 in
+      (-h|--help) echo "Usage:  incident list [OPTIONS]
+
+Lists the incidents that exist along with their statuses.
+
+Options:
+  -h, --help  Displays this help message and exits."; exit 1;;
+      (--) shift; break;;
+      (*) usage; exit 1;;
+    esac
+  done
+
+  unset ARGS
+
+  printf "Incident\tStatus\n"
+  for incident in $(find "$INCIDENTS_PATH" -type f); do
+    printf "%s\t%s\n" "$(echo \"$incident\" | sed -e 's/.*\///g' -e 's/.md.*//g')" "$(head -n 1 "$incident" | sed -e 's/^.*status-badges\///g' -e 's/\.svg.*$//g')"
+  done
 }
 
 usage() {
@@ -132,5 +159,6 @@ done
 case $1 in
   (change-status) shift; change_status "$@";;
   (create) shift; create "$@";;
+  (list) shift; list "$@";;
   (*) printf "Unknown command '%s'.\n\n" "$1"; usage; exit 1;;
 esac
