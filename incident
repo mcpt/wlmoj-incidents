@@ -68,8 +68,9 @@ help() {
 Manages the storage of technical incidents.
 
 Options:
-  -e, --editor <editor>  Change the editor invoked by this command.
-  -h, --help             Displays this help message and exits.
+  -e, --editor <editor>        Change the editor invoked by this command.
+  -h, --help                   Displays this help message and exits.
+  -p, --path <incidents path>  Change the storage path of the incidents.
 
 Commands:
   create  Create a new incident.
@@ -83,13 +84,14 @@ Run -h or --help for more info."
 }
 
 # Handle pre-command functions
-ARGS=$(getopt --quiet --options 'he:' --longoptions 'help,editor:' -- "$@") || ( usage; exit )
+ARGS=$(getopt --quiet --options 'he:p:' --longoptions 'help,editor:,path:' -- "$@") || ( usage; exit )
 eval "set -- $ARGS"
 
 while true; do
   case $1 in
     (-e|--editor) EDITOR="$2"; shift 2;;
     (-h|--help) help; exit 1;;
+    (-p|--path) INCIDENTS_PATH="$2"; shift 2;;
     (--) shift; break;;
     (*) usage; exit 1;;
   esac
