@@ -99,6 +99,8 @@ done
 
 unset ARGS
 
+[ "$1" = "" ] && printf "No command specified.\n\n" && usage && exit 1
+
 # Handle commands
 case $1 in
   (create) shift; create "$@";;
