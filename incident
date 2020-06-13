@@ -9,7 +9,7 @@ INCIDENT_TEMPLATE="incident-template.md"
 
 # Function that takes a single argument, a file, invokes an editor on the file
 # and returns 0 if the file has been changed or 1 if the file has not changed.
-invokeEditor() {
+invoke_editor() {
   initial_checksum=$(cksum "$1")
 
   eval "$EDITOR $1"
@@ -57,7 +57,7 @@ Options:
   echo "Creating $incident_id."
   eval "sed -e 's/YYYY-MM-DDx/$incident_id/' $INCIDENT_TEMPLATE > ${INCIDENTS_PATH}${incident_id}.md"
 
-  invokeEditor "${INCIDENTS_PATH}${incident_id}.md" &&
+  invoke_editor "${INCIDENTS_PATH}${incident_id}.md" &&
     echo "Incident $incident_id created successfully." || 
     (echo "Incident $incident_id failed to create. File not changed. Removing file."; rm "${INCIDENTS_PATH}${incident_id}.md")
 }
