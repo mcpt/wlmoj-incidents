@@ -4,6 +4,7 @@
 EDITOR=${EDITOR:-"vi"}
 INCIDENTS_PATH="incidents/"
 INCIDENT_TEMPLATE="incident-template.md"
+WHOAMI=$(basename "$0")
 
 # Helper functions
 
@@ -19,9 +20,42 @@ invoke_editor() {
 }
 
 # Commands (each function implements one command)
+change_status() {
+  ARGS=$(getopt --name "$WHOAMI" --options 'h' --longoptions 'help' -- "$@")
+  [ "$?" -ne 0 ] && usage && exit
+  eval "set -- $ARGS"
+
+  while true; do
+    case $1 in
+      (-h|--help) echo "Usage:  incident change-status [OPTIONS] <INCIDENT> <NEW STATUS>
+
+Changes the status of a technical incident. Where <INCIDENT> is a valid incident and <NEW STATUS> is one of:
+
+$(ls status-badges | sed -e 's/\.svg//g' -e 's/^/  /')
+
+Options:
+  -h, --help  Displays this help message and exits."; exit 1;;
+      (--) shift; break;;
+      (*) usage; exit 1;;
+    esac
+  done
+
+  unset ARGS
+
+  [ "$#" -ne 2 ] && echo "Wrong number of arguments. Run with --help for more info." && exit 1
+
+  ! [ -e "${INCIDENTS_PATH}${1}.md" ] && echo "Incident $1 does not exist." && exit 1
+
+  ! [ -e "status-badges/${2}.svg" ] && echo "'$2' is not a valid badge. Run with --help for more info." && exit 1
+
+  eval "sed -e 's|!\[\`status: .*\`\]|!\[\`status: ${2}\`\]|g' -e 's|/status-badges/.*.svg|/status-badges/${2}.svg|g' ${INCIDENTS_PATH}${1}.md > ${INCIDENTS_PATH}${1}.md~"
+  mv "${INCIDENTS_PATH}${1}.md~" "${INCIDENTS_PATH}${1}.md"
+  echo "Status badge change successful for incident $1."
+}
+
 create() {
-  # Process extra arguments
-  ARGS=$(getopt --quiet --options 'h' --longoptions 'help' -- "$@") || ( usage; exit )
+  ARGS=$(getopt --name "$WHOAMI" --options 'h' --longoptions 'help' -- "$@")
+  [ "$?" -ne 0 ] && usage && exit
   eval "set -- $ARGS"
 
   while true; do
@@ -39,7 +73,6 @@ Options:
 
   unset ARGS
 
-  # Get data interactively
   current_date="$(date +%Y-%m-%d)"
   discovery_date="baf value"
 
@@ -49,7 +82,6 @@ Options:
     discovery_date=${discovery_date:-"$current_date"}
   done
 
-  # Create the incident
   for letter in a b c d e f g h i j k l m n o p q r s t u v w x y z; do
     ! [ -e "${INCIDENTS_PATH}${discovery_date}${letter}.md" ] && incident_id="${discovery_date}${letter}" && break
   done
@@ -73,7 +105,8 @@ Options:
   -p, --path <incidents path>  Change the storage path of the incidents.
 
 Commands:
-  create  Create a new incident.
+  change-status  Change the status of an incident.
+  create         Create a new incident.
 
 Run 'incident <COMMAND> -h|--help' for more information on a command."
 }
@@ -84,25 +117,20 @@ Run -h or --help for more info."
 }
 
 # Handle pre-command functions
-ARGS=$(getopt --quiet --options 'he:p:' --longoptions 'help,editor:,path:' -- "$@") || ( usage; exit )
-eval "set -- $ARGS"
-
 while true; do
   case $1 in
     (-e|--editor) EDITOR="$2"; shift 2;;
     (-h|--help) help; exit 1;;
     (-p|--path) INCIDENTS_PATH="$2"; shift 2;;
-    (--) shift; break;;
-    (*) usage; exit 1;;
+    (*) break;;
   esac
 done
-
-unset ARGS
 
 [ "$1" = "" ] && printf "No command specified.\n\n" && usage && exit 1
 
 # Handle commands
 case $1 in
+  (change-status) shift; change_status "$@";;
   (create) shift; create "$@";;
   (*) printf "Unknown command '%s'.\n\n" "$1"; usage; exit 1;;
 esac
