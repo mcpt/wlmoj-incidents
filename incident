@@ -1,14 +1,75 @@
 #!/bin/sh
 
+# Constants
+EDITOR=${EDITOR:-"vi"}
+INCIDENTS_PATH="incidents/"
+INCIDENT_TEMPLATE="incident-template.md"
+
+# Helper functions
+
+# Function that takes a single argument, a file, invokes an editor on the file
+# and returns 0 if the file has been changed or 1 if the file has not changed.
+invokeEditor() {
+  initial_checksum=$(cksum "$1")
+
+  eval "$EDITOR $1"
+
+  ! [ "$initial_checksum" = "$(cksum "$1")" ] && unset initial_checksum && return 0
+  unset initial_checksum && return 1
+}
+
+# Commands (each function implements one command)
 create() {
-  echo "Create an incident"
+  # Process extra arguments
+  ARGS=$(getopt --quiet --options 'h' --longoptions 'help' -- "$@") || ( usage; exit )
+  eval "set -- $ARGS"
+
+  while true; do
+    case $1 in
+      (-h|--help) echo "Usage:  incident create [OPTIONS]
+
+Creates a new technical incident.
+
+Options:
+  -h, --help  Displays this help message and exits."; exit 1;;
+      (--) shift; break;;
+      (*) usage; exit 1;;
+    esac
+  done
+
+  unset ARGS
+
+  # Get data interactively
+  current_date="$(date +%Y-%m-%d)"
+  discovery_date="baf value"
+
+  while ! ( echo "$discovery_date" | grep -Eq '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' ); do
+    printf "Enter the incident discovery date in YYYY-MM-DD format [%s]: " "$current_date"
+    read -r discovery_date
+    discovery_date=${discovery_date:-"$current_date"}
+  done
+
+  # Create the incident
+  for letter in a b c d e f g h i j k l m n o p q r s t u v w x y z; do
+    ! [ -e "${INCIDENTS_PATH}${discovery_date}${letter}.md" ] && incident_id="${discovery_date}${letter}" && break
+  done
+
+  echo "Creating $incident_id."
+  eval "sed -e 's/YYYY-MM-DDx/$incident_id/' $INCIDENT_TEMPLATE > ${INCIDENTS_PATH}${incident_id}.md"
+
+  invokeEditor "${INCIDENTS_PATH}${incident_id}.md" &&
+    echo "Incident $incident_id created successfully." || 
+    (echo "Incident $incident_id failed to create. File not changed. Removing file."; rm "${INCIDENTS_PATH}${incident_id}.md")
 }
 
 help() {
   echo "Usage:  incident [OPTIONS] [<COMMAND> [ARGUMENTS]]
 
+Manages the storage of technical incidents.
+
 Options:
-  -h, --help  Displays this help message and exits.
+  -e, --editor <editor>  Change the editor invoked by this command.
+  -h, --help             Displays this help message and exits.
 
 Commands:
   create  Create a new incident.
@@ -22,11 +83,12 @@ Run -h or --help for more info."
 }
 
 # Handle pre-command functions
-ARGS=$(getopt --quiet --options 'h' --longoptions 'help' -- "$@") || ( usage; exit )
+ARGS=$(getopt --quiet --options 'he:' --longoptions 'help,editor:' -- "$@") || ( usage; exit )
 eval "set -- $ARGS"
 
 while true; do
   case $1 in
+    (-e|--editor) EDITOR="$2"; shift 2;;
     (-h|--help) help; exit 1;;
     (--) shift; break;;
     (*) usage; exit 1;;
@@ -37,6 +99,6 @@ unset ARGS
 
 # Handle commands
 case $1 in
-  (create) create;;
+  (create) shift; create "$@";;
   (*) printf "Unknown command '%s'.\n\n" "$1"; usage; exit 1;;
 esac
