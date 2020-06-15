@@ -27,14 +27,15 @@ change_status() {
 
   while true; do
     case $1 in
-      (-h|--help) echo "Usage:  incident change-status [OPTIONS] <INCIDENT> <NEW STATUS>
-
-Changes the status of a technical incident. Where <INCIDENT> is a valid incident and <NEW STATUS> is one of:
-
-$(find status-badges/ -type f | sed -e 's/^.*\///g' -e 's/\.svg.*$//g' -e 's/^/  /')
-
-Options:
-  -h, --help  Displays this help message and exits."; exit 1;;
+      (-h|--help) echo "Usage:  incident change-status [OPTIONS] <INCIDENT> <NEW STATUS>"
+                  echo
+                  echo "Changes the status of a technical incident. Where <INCIDENT> is a valid incident and <NEW STATUS> is one of:"
+                  echo
+                  echo "$(find status-badges/ -type f | sed -e 's/^.*\///g' -e 's/\.svg.*$//g' -e 's/^/  /')"
+                  echo
+                  echo "Options:"
+                  echo "  -h, --help  Displays this help message and exits."
+                  exit 1;;
       (--) shift; break;;
       (*) usage; exit 1;;
     esac
@@ -60,12 +61,13 @@ create() {
 
   while true; do
     case $1 in
-      (-h|--help) echo "Usage:  incident create [OPTIONS]
-
-Creates a new technical incident.
-
-Options:
-  -h, --help  Displays this help message and exits."; exit 1;;
+      (-h|--help) echo "Usage:  incident create [OPTIONS]"
+                  echo
+                  echo "Creates a new technical incident."
+                  echo
+                  echo "Options:"
+                  echo "  -h, --help  Displays this help message and exits."
+                  exit 1;;
       (--) shift; break;;
       (*) usage; exit 1;;
     esac
@@ -95,21 +97,21 @@ Options:
 }
 
 help() {
-  echo "Usage:  incident [OPTIONS] [<COMMAND> [ARGUMENTS]]
-
-Manages the storage of technical incidents.
-
-Options:
-  -e, --editor <editor>        Change the editor invoked by this command.
-  -h, --help                   Displays this help message and exits.
-  -p, --path <incidents path>  Change the storage path of the incidents.
-
-Commands:
-  change-status  Change the status of an incident.
-  create         Create a new incident.
-  list           List the incidents.
-
-Run 'incident <COMMAND> -h|--help' for more information on a command."
+  echo "Usage:  incident [OPTIONS] [<COMMAND> [ARGUMENTS]]"
+  echo
+  echo "Manages the storage of technical incidents."
+  echo
+  echo "Options:"
+  echo "  -e, --editor <editor>        Change the editor invoked by this command."
+  echo "  -h, --help                   Displays this help message and exits."
+  echo "  -p, --path <incidents path>  Change the storage path of the incidents."
+  echo
+  echo "Commands:"
+  echo "  change-status  Change the status of an incident."
+  echo "  create         Create a new incident."
+  echo "  list           List the incidents."
+  echo
+  echo "Run 'incident <COMMAND> -h|--help' for more information on a command."
 }
 
 list() {
@@ -119,12 +121,13 @@ list() {
 
   while true; do
     case $1 in
-      (-h|--help) echo "Usage:  incident list [OPTIONS]
-
-Lists the incidents that exist along with their statuses.
-
-Options:
-  -h, --help  Displays this help message and exits."; exit 1;;
+      (-h|--help) echo "Usage:  incident list [OPTIONS]"
+                  echo
+                  echo "Lists the incidents that exist along with their statuses."
+                  echo
+                  echo "Options:"
+                  echo "  -h, --help  Displays this help message and exits."
+                  exit 1;;
       (--) shift; break;;
       (*) usage; exit 1;;
     esac
@@ -139,8 +142,8 @@ Options:
 }
 
 usage() {
-  echo "Usage:  incident [OPTIONS] [<COMMAND> [ARGUMENTS]]
-Run -h or --help for more info."
+  echo "Usage:  incident [OPTIONS] [<COMMAND> [ARGUMENTS]]"
+  echo "Run -h or --help for more info."
 }
 
 # Handle pre-command functions
