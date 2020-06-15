@@ -1,0 +1,167 @@
+#!/bin/sh
+
+# Constants
+EDITOR=${EDITOR:-"vi"}
+INCIDENTS_PATH="incidents/"
+INCIDENT_TEMPLATE="incident-template.md"
+WHOAMI=$(basename "$0")
+
+# Helper functions
+
+# Function that takes a single argument, a file, invokes an editor on the file
+# and returns 0 if the file has been changed or 1 if the file has not changed.
+invoke_editor() {
+  initial_checksum=$(cksum "$1")
+
+  eval "$EDITOR $1"
+
+  ! [ "$initial_checksum" = "$(cksum "$1")" ] && unset initial_checksum && return 0
+  unset initial_checksum && return 1
+}
+
+# Commands (each function implements one command)
+change_status() {
+  ARGS=$(getopt --name "$WHOAMI" --options 'h' --longoptions 'help' -- "$@")
+  [ "$?" -ne 0 ] && usage && exit
+  eval "set -- $ARGS"
+
+  while true; do
+    case $1 in
+      (-h|--help) echo "Usage:  incident change-status [OPTIONS] <INCIDENT> <NEW STATUS>"
+                  echo
+                  echo "Changes the status of a technical incident. Where <INCIDENT> is a valid incident and <NEW STATUS> is one of:"
+                  echo
+                  echo "$(find status-badges/ -type f | sed -e 's/^.*\///g' -e 's/\.svg.*$//g' -e 's/^/  /')"
+                  echo
+                  echo "Options:"
+                  echo "  -h, --help  Displays this help message and exits."
+                  exit 1;;
+      (--) shift; break;;
+      (*) usage; exit 1;;
+    esac
+  done
+
+  unset ARGS
+
+  [ "$#" -ne 2 ] && echo "Wrong number of arguments. Run with --help for more info." && exit 1
+
+  ! [ -e "${INCIDENTS_PATH}${1}.md" ] && echo "Incident $1 does not exist." && exit 1
+
+  ! [ -e "status-badges/${2}.svg" ] && echo "'$2' is not a valid badge. Run with --help for more info." && exit 1
+
+  eval "sed -e 's|!\[\`status: .*\`\]|!\[\`status: ${2}\`\]|g' -e 's|/status-badges/.*.svg|/status-badges/${2}.svg|g' ${INCIDENTS_PATH}${1}.md > ${INCIDENTS_PATH}${1}.md~"
+  mv "${INCIDENTS_PATH}${1}.md~" "${INCIDENTS_PATH}${1}.md"
+  echo "Status badge change successful for incident $1."
+}
+
+create() {
+  ARGS=$(getopt --name "$WHOAMI" --options 'h' --longoptions 'help' -- "$@")
+  [ "$?" -ne 0 ] && usage && exit
+  eval "set -- $ARGS"
+
+  while true; do
+    case $1 in
+      (-h|--help) echo "Usage:  incident create [OPTIONS]"
+                  echo
+                  echo "Creates a new technical incident."
+                  echo
+                  echo "Options:"
+                  echo "  -h, --help  Displays this help message and exits."
+                  exit 1;;
+      (--) shift; break;;
+      (*) usage; exit 1;;
+    esac
+  done
+
+  unset ARGS
+
+  current_date="$(date +%Y-%m-%d)"
+  discovery_date="baf value"
+
+  while ! ( echo "$discovery_date" | grep -Eq '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' ); do
+    printf "Enter the incident discovery date in YYYY-MM-DD format [%s]: " "$current_date"
+    read -r discovery_date
+    discovery_date=${discovery_date:-"$current_date"}
+  done
+
+  for letter in a b c d e f g h i j k l m n o p q r s t u v w x y z; do
+    ! [ -e "${INCIDENTS_PATH}${discovery_date}${letter}.md" ] && incident_id="${discovery_date}${letter}" && break
+  done
+
+  echo "Creating $incident_id."
+  eval "sed -e 's/YYYY-MM-DDx/$incident_id/' $INCIDENT_TEMPLATE > ${INCIDENTS_PATH}${incident_id}.md"
+
+  invoke_editor "${INCIDENTS_PATH}${incident_id}.md" &&
+    echo "Incident $incident_id created successfully." || 
+    (echo "Incident $incident_id failed to create. File not changed. Removing file."; rm "${INCIDENTS_PATH}${incident_id}.md")
+}
+
+help() {
+  echo "Usage:  incident [OPTIONS] [<COMMAND> [ARGUMENTS]]"
+  echo
+  echo "Manages the storage of technical incidents."
+  echo
+  echo "Options:"
+  echo "  -e, --editor <editor>        Change the editor invoked by this command."
+  echo "  -h, --help                   Displays this help message and exits."
+  echo "  -p, --path <incidents path>  Change the storage path of the incidents."
+  echo
+  echo "Commands:"
+  echo "  change-status  Change the status of an incident."
+  echo "  create         Create a new incident."
+  echo "  list           List the incidents."
+  echo
+  echo "Run 'incident <COMMAND> -h|--help' for more information on a command."
+}
+
+list() {
+  ARGS=$(getopt --name "$WHOAMI" --options 'h' --longoptions 'help' -- "$@")
+  [ "$?" -ne 0 ] && usage && exit
+  eval "set -- $ARGS"
+
+  while true; do
+    case $1 in
+      (-h|--help) echo "Usage:  incident list [OPTIONS]"
+                  echo
+                  echo "Lists the incidents that exist along with their statuses."
+                  echo
+                  echo "Options:"
+                  echo "  -h, --help  Displays this help message and exits."
+                  exit 1;;
+      (--) shift; break;;
+      (*) usage; exit 1;;
+    esac
+  done
+
+  unset ARGS
+
+  printf "Incident\tStatus\n"
+  for incident in $(find "$INCIDENTS_PATH" -type f); do
+    printf "%s\t%s\n" "$(echo "$incident" | sed -e 's/.*\///g' -e 's/.md.*//g')" "$(head -n 1 "$incident" | sed -e 's/^.*status-badges\///g' -e 's/\.svg.*$//g')"
+  done
+}
+
+usage() {
+  echo "Usage:  incident [OPTIONS] [<COMMAND> [ARGUMENTS]]"
+  echo "Run -h or --help for more info."
+}
+
+# Handle pre-command functions
+while true; do
+  case $1 in
+    (-e|--editor) EDITOR="$2"; shift 2;;
+    (-h|--help) help; exit 1;;
+    (-p|--path) INCIDENTS_PATH="$2"; shift 2;;
+    (*) break;;
+  esac
+done
+
+[ "$1" = "" ] && printf "No command specified.\n\n" && usage && exit 1
+
+# Handle commands
+case $1 in
+  (change-status) shift; change_status "$@";;
+  (create) shift; create "$@";;
+  (list) shift; list "$@";;
+  (*) printf "Unknown command '%s'.\n\n" "$1"; usage; exit 1;;
+esac
