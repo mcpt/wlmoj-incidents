@@ -13,7 +13,7 @@ generate_homepage() {
   echo "Here they are:"
   echo "| Incident | Status |"
   echo "|---|---|"
-  list | awk '{print "| [" $1 "](https://status.mcpt.ca/incidents/" $1 ") | ![`status: " $2 "`](/status-badges/" $2 ".svg) |"}'
+  list | tac | awk '{print "| [" $1 "](https://status.mcpt.ca/incidents/" $1 ") | ![`status: " $2 "`](/status-badges/" $2 ".svg) |"}'
 }
 
 # Function that takes a single argument, a file, invokes an editor on the file
