@@ -96,6 +96,14 @@ create() {
     (echo "Incident $incident_id failed to create. File not changed. Removing file."; rm "${INCIDENTS_PATH}${incident_id}.md")
 }
 
+generate_homepage() {
+  echo "# MCPT Technical Incidents"
+  echo "Here they are:"
+  echo "| Incident | Status |"
+  echo "|---|---|"
+  list | awk '{print "| [" $1 "](https://status.mcpt.ca/incidents/" $1 ") | ![`status: " $2 "`](/status-badges/" $2 ".svg) |"}'
+}
+
 help() {
   echo "Usage:  incident [OPTIONS] [<COMMAND> [ARGUMENTS]]"
   echo
@@ -107,9 +115,10 @@ help() {
   echo "  -p, --path <incidents path>  Change the storage path of the incidents."
   echo
   echo "Commands:"
-  echo "  change-status  Change the status of an incident."
-  echo "  create         Create a new incident."
-  echo "  list           List the incidents."
+  echo "  change-status      Change the status of an incident."
+  echo "  create             Create a new incident."
+  echo "  list               List the incidents."
+  echo "  generate-homepage  Generates a markdown file indexing the issues."
   echo
   echo "Run 'incident <COMMAND> -h|--help' for more information on a command."
 }
@@ -135,7 +144,6 @@ list() {
 
   unset ARGS
 
-  printf "Incident\tStatus\n"
   for incident in $(find "$INCIDENTS_PATH" -type f); do
     printf "%s\t%s\n" "$(echo "$incident" | sed -e 's/.*\///g' -e 's/.md.*//g')" "$(head -n 1 "$incident" | sed -e 's/^.*status-badges\///g' -e 's/\.svg.*$//g')"
   done
@@ -162,6 +170,7 @@ done
 case $1 in
   (change-status) shift; change_status "$@";;
   (create) shift; create "$@";;
+  (generate-homepage) shift; generate_homepage "$@";;
   (list) shift; list "$@";;
   (*) printf "Unknown command '%s'.\n\n" "$1"; usage; exit 1;;
 esac
