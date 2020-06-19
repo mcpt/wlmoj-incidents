@@ -8,6 +8,14 @@ WHOAMI=$(basename "$0")
 
 # Helper functions
 
+generate_homepage() {
+  echo "# MCPT Technical Incidents"
+  echo "Here they are:"
+  echo "| Incident | Status |"
+  echo "|---|---|"
+  list | awk '{print "| [" $1 "](https://status.mcpt.ca/incidents/" $1 ") | ![`status: " $2 "`](/status-badges/" $2 ".svg) |"}'
+}
+
 # Function that takes a single argument, a file, invokes an editor on the file
 # and returns 0 if the file has been changed or 1 if the file has not changed.
 invoke_editor() {
@@ -51,6 +59,9 @@ change_status() {
 
   eval "sed -e 's|!\[\`status: .*\`\]|!\[\`status: ${2}\`\]|g' -e 's|/status-badges/.*.svg|/status-badges/${2}.svg|g' ${INCIDENTS_PATH}${1}.md > ${INCIDENTS_PATH}${1}.md~"
   mv "${INCIDENTS_PATH}${1}.md~" "${INCIDENTS_PATH}${1}.md"
+
+  generate_homepage > README.md
+
   echo "Status badge change successful for incident $1."
 }
 
@@ -91,17 +102,13 @@ create() {
   echo "Creating $incident_id."
   eval "sed -e 's/YYYY-MM-DDx/$incident_id/' $INCIDENT_TEMPLATE > ${INCIDENTS_PATH}${incident_id}.md"
 
-  invoke_editor "${INCIDENTS_PATH}${incident_id}.md" &&
-    echo "Incident $incident_id created successfully." || 
-    (echo "Incident $incident_id failed to create. File not changed. Removing file."; rm "${INCIDENTS_PATH}${incident_id}.md")
-}
-
-generate_homepage() {
-  echo "# MCPT Technical Incidents"
-  echo "Here they are:"
-  echo "| Incident | Status |"
-  echo "|---|---|"
-  list | awk '{print "| [" $1 "](https://status.mcpt.ca/incidents/" $1 ") | ![`status: " $2 "`](/status-badges/" $2 ".svg) |"}'
+  if invoke_editor "${INCIDENTS_PATH}${incident_id}.md"; then
+    generate_homepage > README.md
+    echo "Incident $incident_id created successfully."
+  else
+    echo "Incident $incident_id failed to create. File not changed. Removing file."
+    rm "${INCIDENTS_PATH}${incident_id}.md"
+  fi
 }
 
 help() {
