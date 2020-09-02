@@ -43,7 +43,7 @@
 
 # What is your status page called?
 # Shows up in the browser bar and meta tags
-title: Eggsample Status
+title: MCPT
 
 # Should posts, which have a publish date
 # from the future, be built? Useful for
@@ -90,7 +90,7 @@ defaultContentLanguage: en
 # localhost should automatically work.
 #
 # Example: https://status.example.com/
-baseURL: https://cstate.mnts.lt
+baseURL: https://status.mcpt.ca
 
 ############################################################
 # +------------------------------------------------------+ #
@@ -121,12 +121,8 @@ params:
   # For help, see the wiki:
   # https://github.com/cstate/cstate/wiki/Customization
   categories:
-    - name: North Coast
-      description: The main servers are located here.
-      closed: true
-    - name: East Coast      
-    - name: Uncategorized
-      untitled: true
+    - name: Toronto
+      description: Our main servers are hosted at DigitalOcean in Toronto.
 
   # These are your systems. Change them to
   # change the amount of components.
@@ -134,16 +130,21 @@ params:
   # For help, see the wiki:
   # https://github.com/cstate/cstate/wiki/Customization
   systems:
-    - name: Gateway
-      category: North Coast
-    - name: Backup Gateway
-      category: East Coast
-    - name: API
-      description: The guts of the application.
-      category: Uncategorized
-    - name: Media Proxy
-      description: This is the service responsible for serving images, audio, and video. It is reliant on our CDN.
-      category: Uncategorized
+    - name: WLMOJ Site
+      description: The front-facing website at https://mcpt.ca
+      category: Toronto
+    - name: WLMOJ Judge
+      description: The submission judging service
+      category: Toronto
+    - name: Verification Bot
+      description: The Discord student verification system
+      category: Toronto
+    - name: Karby
+      description: Internal log collection service
+      category: Toronto
+    - name: Backupy
+      description: Internal Backup collection service
+      category: Toronto
 
   # What date format to use?
   #
