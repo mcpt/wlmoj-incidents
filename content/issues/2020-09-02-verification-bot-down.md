@@ -10,5 +10,6 @@ affected:
 section: issue
 ---
 
+*Resolved* - The issue has been resolved and normal service has been restored. (2020-09-12 20:04)
 
-*Investigating* - We're aware of an issue when attempting to verify a user using the Verification Bot.
+*Investigating* - We're aware of an issue when attempting to verify a user using the Verification Bot. (2020-09-01 23:16)
