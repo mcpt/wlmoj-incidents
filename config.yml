@@ -121,8 +121,10 @@ params:
   # For help, see the wiki:
   # https://github.com/cstate/cstate/wiki/Customization
   categories:
-    - name: External Services
-    - name: Internal Services
+    - name: mcpt.ca
+      description: Services used to run the mcpt.ca site.
+    - name: Uncategorized
+      untitled: true
 
   # These are your systems. Change them to
   # change the amount of components.
@@ -130,21 +132,36 @@ params:
   # For help, see the wiki:
   # https://github.com/cstate/cstate/wiki/Customization
   systems:
-    - name: WLMOJ Site
-      description: The front-facing website at https://mcpt.ca
-      category: External Services
-    - name: WLMOJ Judge
-      description: The submission judging service
-      category: External Services
-    - name: Verification Bot
-      description: The Discord student verification system
-      category: External Services
+    - name: Backup Service
+      description: Internal Backup collection service
+      category: mcpt.ca
+    - name: Bridge
+      description: Judge management service
+      category: mcpt.ca
+    - name: Celery
+      description: Task queue service
+      category: mcpt.ca
+    - name: Event Server
+      description: Live update service
+      category: mcpt.ca
+    - name: Judge(s)
+      description: Submission judging service
+      category: mcpt.ca
+    - name: Mathoid
+      description: Math formula rendering service
+      category: mcpt.ca
+    - name: Site
+      description: Front-facing website at https://mcpt.ca
+      category: mcpt.ca
+    - name: Texoid
+      description: LaTeX document rendering service
+      category: mcpt.ca
     - name: Karby
       description: Internal log collection service
-      category: Internal Services
-    - name: Backupy
-      description: Internal Backup collection service
-      category: Internal Services
+      category: Uncategorized
+    - name: Verification Bot
+      description: Discord student verification system
+      category: Uncategorized
 
   # What date format to use?
   #
