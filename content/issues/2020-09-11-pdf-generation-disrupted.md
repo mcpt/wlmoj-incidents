@@ -1,9 +1,10 @@
 ---
 title: PDF generation is disrupted.
 date: 2020-09-11 18:28:00
-resolved: false
+resolved: true
+resolvedWhen: 2020-09-11 18:28:00
 # Possible severity levels: down, disrupted, notice
-severity: disrupted
+severity: notice
 affected:
   - Site
 section: issue

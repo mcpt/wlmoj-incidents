@@ -1,4 +1,4 @@
-# Incident 2020-09-11a ![`status: resolved`](/status-badges/resolved.svg)
+# Incident 2020-09-11: PDF Generation Disrupted
 
 ## Issue Summary
 Memory starvation on sites during PDF generation

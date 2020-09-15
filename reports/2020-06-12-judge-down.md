@@ -1,4 +1,4 @@
-# Incident 2020-06-12a ![`status: resolved`](/status-badges/resolved.svg)
+# Incident 2020-06-12: Judge Down
 
 ## Issue Summary
 An update to the WLMOJ-judge removed functionality that required it to start, causing downtime.

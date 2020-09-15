@@ -1,4 +1,4 @@
-# Incident 2020-06-05a ![`status: resolved`](/status-badges/resolved.svg)
+# Incident 2020-06-05: Mathoid, Texoid, Event Server down
 
 ## Issue Summary
 Mathoid, texoid, and the event server ceased to function. This left certain users seeing raw latex instead of rendered text, and left all of the texoid diagrams as raw text.
