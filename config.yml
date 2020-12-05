@@ -147,6 +147,9 @@ params:
     - name: Judge(s)
       description: Submission judging service
       category: mcpt.ca
+    - name: LDAP Server
+      description: Server used for authentication to all other services
+      category: Uncategorized
     - name: Mathoid
       description: Math formula rendering service
       category: mcpt.ca
