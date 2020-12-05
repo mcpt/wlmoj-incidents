@@ -2,7 +2,7 @@
 title: Disrupted Maintenance Capability
 date: 2020-12-04 11:10:00
 resolved: true
-resolvedWhen: 2020-12-04 14:24:00
+resolvedWhen: 2020-12-04 12:20:00
 # Possible severity levels: down, disrupted, notice
 severity: down
 affected:
