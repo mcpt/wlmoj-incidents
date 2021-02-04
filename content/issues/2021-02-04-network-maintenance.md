@@ -1,5 +1,5 @@
 ---
-title: PDF generation is disrupted.
+title: Scheduled Network Maintentance
 date: 2021-02-04
 resolved: false
 # Possible severity levels: down, disrupted, notice
