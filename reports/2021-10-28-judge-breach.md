@@ -1,4 +1,4 @@
-# Incident 2020-06-12: Judge Server Compromised
+# Incident 2021-10-28: Judge Server Compromised
 
 ## Issue Summary
 Remote attackers were able to login as `root` and run malicious executables (ex. cryptocurrency miners) on the `judge-3` droplet. Rust and other languages may have had slower than expected compilation and execution times.
