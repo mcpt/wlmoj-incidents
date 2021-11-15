@@ -30,6 +30,8 @@ Before deleting the `judge-3` droplet, an archive of relevant directories on the
 
 Overall, simply disabling a firewall should not lead to potentially immediate and total compromise of the system, so the improved security steps below should be undertaken. This is especially true when Docker is present, as its networking rules override those of UFW.
 
+Taking users reports of *highly unusual*, slower than normal compilation or execution times for languages should be more thoroughly investigated as they may have revealed this compromise several days earlier.
+
 *Temporarily*, Debian's default SSH daemon configuration will be used with SSH keys for judge members being added manually.
 
 The UFW firewall has also been re-enabled, though now for the primary purpose of preventing access to the judge's problem reloading API. The judge's problem reloading API may be further secured by only listening on the internal Wireguard network's IP.
